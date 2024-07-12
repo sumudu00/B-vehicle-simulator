@@ -4,36 +4,42 @@ using UnityEngine;
 
 public class clearTheRoad : MonoBehaviour
 {
-    private Camera mainCamera;
+    public Camera maincamera; 
 
     void Start()
     {
-        mainCamera = Camera.main; // Assuming your camera is tagged as "MainCamera"
+        
+        if (maincamera == null)
+        {
+            maincamera = Camera.main;
+        }
     }
 
-    void Update()
+    public void OnButtonClicked()
     {
-        // Check if 'C' key is pressed
-        if (Input.GetKeyDown(KeyCode.G))
-        {
-            // Get all the cubes in the scene (or objects with cube-shaped colliders)
-            GameObject[] cubes = GameObject.FindGameObjectsWithTag("car");
+        
+        GameObject[] cars = GameObject.FindGameObjectsWithTag("car");
 
-            foreach (GameObject cube in cubes)
+        foreach (GameObject car in cars)
+        {
+            if (IsInView(car.transform.position))
             {
-                // Check if the cube is within the camera's view
-                if (IsInView(cube.transform.position))
-                {
-                    cube.SetActive(false); // Disable the cube (make it vanish)
-                }
+                car.SetActive(false);
+               
             }
         }
     }
 
     bool IsInView(Vector3 position)
     {
-        // Check if the position is within the camera's view
-        Vector3 screenPoint = mainCamera.WorldToViewportPoint(position);
+        // Check if the position is within the main camera's view
+        if (maincamera == null)
+        {
+            
+            return false;
+        }
+
+        Vector3 screenPoint = maincamera.WorldToViewportPoint(position);
         return screenPoint.x >= 0 && screenPoint.x <= 1 && screenPoint.y >= 0 && screenPoint.y <= 1 && screenPoint.z > 0;
     }
 }
